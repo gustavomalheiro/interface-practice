@@ -16,16 +16,16 @@ public class ContractService {
     public void processContract(Contract contract, Integer months) {
         // aqui vai ter a lógica da taxa
         // e é aqui que eu vou instanciar as installments
-        Double installmentAmount = (contract.getTotalValue() / months);
+        double installmentAmount = contract.getTotalValue() / months;
 
-        for (int i = 0; i <= (months-1); i++) {
-            LocalDate dueDate = contract.getDate().plusMonths(i+1);
+        for (int i = 1; i <= months; i++) {
+            LocalDate dueDate = contract.getDate().plusMonths(i);
 
-            Double simpleMonthInterest = onlinePaymentService.interest(installmentAmount, (i+1));
+            double simpleMonthInterest = onlinePaymentService.interest(installmentAmount, i);
+            double paymentServiceFee = onlinePaymentService.paymentFee(installmentAmount + simpleMonthInterest);
+            double quota = installmentAmount + simpleMonthInterest + paymentServiceFee;
 
-            Double paymentServiceFee = onlinePaymentService.paymentFee(simpleMonthInterest);
-
-            contract.getInstallments().add(new Installment(dueDate, paymentServiceFee));
+            contract.getInstallments().add(new Installment(dueDate, quota));
         }
     }
 

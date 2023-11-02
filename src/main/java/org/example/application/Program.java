@@ -35,5 +35,7 @@ public class Program {
 
         System.out.println("Parcelas:");
         contract.getInstallments().forEach(System.out::println);
+
+        sc.close();
     }
 }
